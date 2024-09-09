@@ -1,4 +1,4 @@
-module hqiasjehrlb/go-sql-tool
+module github.com/hqiasjehrlb/go-sql-tool
 
 go 1.22.5
 
