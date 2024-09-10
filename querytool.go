@@ -11,24 +11,25 @@ import (
 //
 // ExtFields are columns not in struct T but returns by query.
 // *T will be nil if no rows returned.
-func QueryRow[T any](ctx Context, db DBConn, query string, args ...any) (*T, ExtFieldMap, error) {
-	rows, ext, err := QueryRows[T](ctx, db, query, args...)
+func QueryRow[T any](ctx Context, db DBConn, query string, args ...any) (result *T, ext ExtFieldMap, err error) {
+	rows, exts, err := QueryRows[T](ctx, db, query, args...)
 	if err != nil {
-		return nil, nil, err
+		return
 	}
-	if len(rows) > 0 && len(ext) > 0 {
-		return &rows[0], ext[0], nil
+	if len(rows) > 0 && len(exts) > 0 {
+		result = &rows[0]
+		ext = exts[0]
 	}
-	return nil, nil, nil
+	return
 }
 
 // Query rows into []T
 //
 // []ExtFields are rows with columns not in struct T but returns by query.
 // []T will be empty slice when no rows returned.
-func QueryRows[T any](ctx Context, db DBConn, query string, args ...any) (results []T, ext []ExtFieldMap, err error) {
+func QueryRows[T any](ctx Context, db DBConn, query string, args ...any) (results []T, exts []ExtFieldMap, err error) {
 	results = []T{}
-	ext = []ExtFieldMap{}
+	exts = []ExtFieldMap{}
 
 	data := new(T)
 	rv := reflect.ValueOf(data).Elem()
@@ -91,7 +92,7 @@ func QueryRows[T any](ctx Context, db DBConn, query string, args ...any) (result
 			}
 		}
 		results = append(results, *data)
-		ext = append(ext, m)
+		exts = append(exts, m)
 	}
 
 	return
