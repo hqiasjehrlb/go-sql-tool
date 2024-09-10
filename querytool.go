@@ -7,14 +7,6 @@ import (
 	"reflect"
 )
 
-// Alias for context.Context
-type Context = context.Context
-
-// This is an interface for *sql.DB or *sql.Conn
-type DBConn interface {
-	QueryContext(Context, string, ...any) (*sql.Rows, error)
-}
-
 // Query single row into T
 //
 // ExtFields are columns not in struct T but returns by query.
@@ -103,4 +95,12 @@ func QueryRows[T any](ctx Context, db DBConn, query string, args ...any) (result
 	}
 
 	return
+}
+
+// Alias for context.Context
+type Context = context.Context
+
+// This is an interface for *sql.DB or *sql.Conn
+type DBConn interface {
+	QueryContext(Context, string, ...any) (*sql.Rows, error)
 }
