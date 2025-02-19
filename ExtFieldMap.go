@@ -1,6 +1,10 @@
 package sqltool
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+	"strings"
+)
 
 type ExtFieldMap map[string]any
 
@@ -28,6 +32,19 @@ func (m ExtFieldMap) GetInt(key string) *int64 {
 // To get string value in map by key
 func (m ExtFieldMap) GetString(key string) *string {
 	var str string
+
+	if v := m.GetBool(key); v != nil {
+		str = fmt.Sprintf("%v", *v)
+		return &str
+	}
+
+	if v := m.GetFloat(key); v != nil {
+		str = fmt.Sprintf("%f", *v)
+		str = strings.TrimRightFunc(str, func(r rune) bool { return r == '0' })
+		str = strings.TrimRightFunc(str, func(r rune) bool { return r == '.' })
+		return &str
+	}
+
 	t := reflect.TypeOf(str)
 	r := m.ValueOf(key)
 	if r.IsValid() && r.CanConvert(t) {

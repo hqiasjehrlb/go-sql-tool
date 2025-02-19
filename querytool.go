@@ -10,8 +10,8 @@ import (
 // Query single row into T
 //
 // ExtFields are columns not in struct T but returns by query.
-// *T will be nil if no rows returned.
-func QueryRow[T any](ctx Context, db DBConn, query string, args ...any) (result *T, ext ExtFieldMap, err error) {
+// *T will be the first row returned from DB, and will be nil if no rows returned.
+func QueryRow[T any](ctx context.Context, db DBConn, query string, args ...any) (result *T, ext ExtFieldMap, err error) {
 	rows, exts, err := QueryRows[T](ctx, db, query, args...)
 	if err != nil {
 		return
@@ -27,7 +27,7 @@ func QueryRow[T any](ctx Context, db DBConn, query string, args ...any) (result 
 //
 // []ExtFields are rows with columns not in struct T but returns by query.
 // []T will be empty slice when no rows returned.
-func QueryRows[T any](ctx Context, db DBConn, query string, args ...any) (results []T, exts []ExtFieldMap, err error) {
+func QueryRows[T any](ctx context.Context, db DBConn, query string, args ...any) (results []T, exts []ExtFieldMap, err error) {
 	results = []T{}
 	exts = []ExtFieldMap{}
 
@@ -98,10 +98,7 @@ func QueryRows[T any](ctx Context, db DBConn, query string, args ...any) (result
 	return
 }
 
-// Alias for context.Context
-type Context = context.Context
-
 // This is an interface for *sql.DB or *sql.Conn
 type DBConn interface {
-	QueryContext(Context, string, ...any) (*sql.Rows, error)
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
 }

@@ -25,7 +25,8 @@ func main() {
     SELECT
       id, col_1
       count(*) over() AS count
-    FROM my_table;
+    FROM my_table
+    WHERE col_1 LIKE $1;
   `
   args = []any{"%"}
   datas, ext, err := sqltool.QueryRows[MyData](context.Background(), db, query, args...)
